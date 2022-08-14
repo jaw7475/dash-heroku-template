@@ -97,6 +97,7 @@ facet_box = px.box(smalldf, x='income', y = 'sex', color = 'sex',
 facet_box.update_layout(showlegend = False)
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 myfigs = [genders_table, bread_bar, fig, income_box, prestige_box, facet_box]
 
