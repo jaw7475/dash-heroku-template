@@ -151,8 +151,12 @@ app.layout = html.Div(
                 html.H2("Occupational Prestige and Income by Gender"),
                 dcc.Graph(figure=fig),
                 
+                html.Div([
+
                 html.H2("Income by Gender Grouped by Prestige"),
-                dcc.Graph(figure=facet_box),
+                dcc.Graph(figure=facet_box)
+
+                ], style = {'width':'100%', 'float':'right'}),
                 
                 html.Div([
 
