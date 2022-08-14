@@ -125,22 +125,32 @@ app.layout = html.Div(
                 
                 html.Div([
                     
-                    html.H2("Responses to the Breadwinner Survey Question by Gender"),
-                    dcc.Graph(figure=bread_bar)
-                    
-                ], style = {'width':'48%', 'float':'left'}),
+                    html.H3("Survey Question"),
+                    dcc.Dropdown(id='question',
+                        options=['satjob', 'relationship', 'male_breadwinner', 'men_bettersuited', 'child_suffer', 'men_overwork'],
+                        value='male_breadwinner'),
+
+                    html.H3("Demographic"),
+                    dcc.Dropdown(id='demographic',
+                        options=['sex', 'region', 'education'],
+                        value = 'sex')
+                                
+                ], style = {'width':'25%', 'float':'left'}),
                 
                 html.Div([
 
-                    html.H2("Occupational Prestige and Income by Gender"),
-                    dcc.Graph(figure=fig)
+                    html.H2("Responses to Selected Question by Selected Demographic"),
+                    dcc.Graph(id='customplot')
                     
-                ], style = {'width':'48%', 'float':'right'}),
+                ], style = {'width':'70%', 'float':'right'}),
                 
             ]),
             
             dcc.Tab(label='Income and Prestige Stats', children=[
-        
+
+                html.H2("Occupational Prestige and Income by Gender"),
+                dcc.Graph(figure=fig),
+                
                 html.H2("Income by Gender Grouped by Prestige"),
                 dcc.Graph(figure=facet_box),
                 
@@ -164,6 +174,20 @@ app.layout = html.Div(
         
     ], style = {'backgroundColor': '#FAEBD7', 'color': '#2F4F4F', 'padding': 10, 'flex': 1}
 )
+
+@app.callback(Output(component_id="customplot",component_property="figure"), 
+             [Input(component_id='question',component_property="value"),
+              Input(component_id='demographic',component_property="value")])
+
+def responsebar(question, demographic):
+    
+    plotter = gss_clean.groupby([f'{demographic}', f'{question}']).size().reset_index()
+    plotter = plotter.rename({ 0:'Count'}, axis = 1)
+
+    bargraph = px.bar(plotter, x=f'{question}', y='Count', color=f'{demographic}', 
+                       barmode = 'group', width=800, height=600)
+    
+    return bargraph
 
 if __name__ == '__main__':
     app.run_server(debug=True)
